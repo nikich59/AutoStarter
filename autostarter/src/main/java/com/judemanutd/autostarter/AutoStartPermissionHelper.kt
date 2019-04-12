@@ -72,8 +72,11 @@ class AutoStartPermissionHelper private constructor() {
     fun isAutoStartPermissionRequired(context: Context): Boolean {
         val build_info = Build.BRAND.toLowerCase()
 
-        return build_info == BRAND_XIAOMI || build_info == BRAND_LETV || build_info == BRAND_HONOR || 
-            build_info == BRAND_OPPO || build_info == BRAND_VIVO
+        return build_info == BRAND_XIAOMI && isPackageExists(context, PACKAGE_XIAOMI_MAIN) ||
+                build_info == BRAND_LETV && isPackageExists(context, PACKAGE_LETV_MAIN) ||
+                build_info == BRAND_HONOR && isPackageExists(context, PACKAGE_HONOR_MAIN) || 
+                build_info == BRAND_OPPO && (isPackageExists(context, PACKAGE_OPPO_MAIN) || isPackageExists(context, PACKAGE_OPPO_FALLBACK)) ||
+                build_info == BRAND_VIVO && (isPackageExists(context, PACKAGE_VIVO_MAIN) || isPackageExists(context, PACKAGE_VIVO_FALLBACK))
     }
 
     private fun autoStartXiaomi(context: Context) {
