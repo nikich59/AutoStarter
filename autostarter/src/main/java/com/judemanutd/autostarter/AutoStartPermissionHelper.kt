@@ -1,5 +1,6 @@
 package com.judemanutd.autostarter
 
+import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -50,39 +51,39 @@ class AutoStartPermissionHelper private constructor() {
     private val PACKAGE_VIVO_COMPONENT_FALLBACK = "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"
     private val PACKAGE_VIVO_COMPONENT_FALLBACK_A = "com.iqoo.secure.ui.phoneoptimize.BgStartUpManager"
 
-    fun getAutoStartPermission(context: Context) {
+    fun getAutoStartPermission(context: Context, requestCode: Int) {
 
         val build_info = Build.BRAND.toLowerCase()
 
         when (build_info) {
 
-            BRAND_XIAOMI -> autoStartXiaomi(context)
+            BRAND_XIAOMI -> autoStartXiaomi(context, requestCode)
 
-            BRAND_LETV -> autoStartLetv(context)
+            BRAND_LETV -> autoStartLetv(context, requestCode)
 
-            BRAND_HONOR -> autoStartHonor(context)
+            BRAND_HONOR -> autoStartHonor(context, requestCode)
 
-            BRAND_OPPO -> autoStartOppo(context)
+            BRAND_OPPO -> autoStartOppo(context, requestCode)
 
-            BRAND_VIVO -> autoStartVivo(context)
+            BRAND_VIVO -> autoStartVivo(context, requestCode)
         }
 
     }
-    
+
     fun isAutoStartPermissionRequired(context: Context): Boolean {
         val build_info = Build.BRAND.toLowerCase()
 
         return build_info == BRAND_XIAOMI && isPackageExists(context, PACKAGE_XIAOMI_MAIN) ||
                 build_info == BRAND_LETV && isPackageExists(context, PACKAGE_LETV_MAIN) ||
-                build_info == BRAND_HONOR && isPackageExists(context, PACKAGE_HONOR_MAIN) || 
+                build_info == BRAND_HONOR && isPackageExists(context, PACKAGE_HONOR_MAIN) ||
                 build_info == BRAND_OPPO && (isPackageExists(context, PACKAGE_OPPO_MAIN) || isPackageExists(context, PACKAGE_OPPO_FALLBACK)) ||
                 build_info == BRAND_VIVO && (isPackageExists(context, PACKAGE_VIVO_MAIN) || isPackageExists(context, PACKAGE_VIVO_FALLBACK))
     }
 
-    private fun autoStartXiaomi(context: Context) {
+    private fun autoStartXiaomi(context: Context, requestCode: Int) {
         if (isPackageExists(context, PACKAGE_XIAOMI_MAIN)) {
             try {
-                startIntent(context, PACKAGE_XIAOMI_MAIN, PACKAGE_XIAOMI_COMPONENT)
+                startIntent(context, PACKAGE_XIAOMI_MAIN, PACKAGE_XIAOMI_COMPONENT, requestCode)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -90,10 +91,10 @@ class AutoStartPermissionHelper private constructor() {
         }
     }
 
-    private fun autoStartLetv(context: Context) {
+    private fun autoStartLetv(context: Context, requestCode: Int) {
         if (isPackageExists(context, PACKAGE_LETV_MAIN)) {
             try {
-                startIntent(context, PACKAGE_LETV_MAIN, PACKAGE_LETV_COMPONENT)
+                startIntent(context, PACKAGE_LETV_MAIN, PACKAGE_LETV_COMPONENT, requestCode)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -101,10 +102,10 @@ class AutoStartPermissionHelper private constructor() {
         }
     }
 
-    private fun autoStartHonor(context: Context) {
+    private fun autoStartHonor(context: Context, requestCode: Int) {
         if (isPackageExists(context, PACKAGE_HONOR_MAIN)) {
             try {
-                startIntent(context, PACKAGE_HONOR_MAIN, PACKAGE_HONOR_COMPONENT)
+                startIntent(context, PACKAGE_HONOR_MAIN, PACKAGE_HONOR_COMPONENT, requestCode)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -112,18 +113,18 @@ class AutoStartPermissionHelper private constructor() {
         }
     }
 
-    private fun autoStartOppo(context: Context) {
+    private fun autoStartOppo(context: Context, requestCode: Int) {
         if (isPackageExists(context, PACKAGE_OPPO_MAIN) || isPackageExists(context, PACKAGE_OPPO_FALLBACK)) {
             try {
-                startIntent(context, PACKAGE_OPPO_MAIN, PACKAGE_OPPO_COMPONENT)
+                startIntent(context, PACKAGE_OPPO_MAIN, PACKAGE_OPPO_COMPONENT, requestCode)
             } catch (e: Exception) {
                 e.printStackTrace()
                 try {
-                    startIntent(context, PACKAGE_OPPO_FALLBACK, PACKAGE_OPPO_COMPONENT_FALLBACK)
+                    startIntent(context, PACKAGE_OPPO_FALLBACK, PACKAGE_OPPO_COMPONENT_FALLBACK, requestCode)
                 } catch (ex: Exception) {
                     ex.printStackTrace()
                     try {
-                        startIntent(context, PACKAGE_OPPO_MAIN, PACKAGE_OPPO_COMPONENT_FALLBACK_A)
+                        startIntent(context, PACKAGE_OPPO_MAIN, PACKAGE_OPPO_COMPONENT_FALLBACK_A, requestCode)
                     } catch (exx: Exception) {
                         exx.printStackTrace()
                     }
@@ -135,18 +136,18 @@ class AutoStartPermissionHelper private constructor() {
         }
     }
 
-    private fun autoStartVivo(context: Context) {
+    private fun autoStartVivo(context: Context, requestCode: Int) {
         if (isPackageExists(context, PACKAGE_VIVO_MAIN) || isPackageExists(context, PACKAGE_VIVO_FALLBACK)) {
             try {
-                startIntent(context, PACKAGE_VIVO_MAIN, PACKAGE_VIVO_COMPONENT)
+                startIntent(context, PACKAGE_VIVO_MAIN, PACKAGE_VIVO_COMPONENT, requestCode)
             } catch (e: Exception) {
                 e.printStackTrace()
                 try {
-                    startIntent(context, PACKAGE_VIVO_FALLBACK, PACKAGE_VIVO_COMPONENT_FALLBACK)
+                    startIntent(context, PACKAGE_VIVO_FALLBACK, PACKAGE_VIVO_COMPONENT_FALLBACK, requestCode)
                 } catch (ex: Exception) {
                     ex.printStackTrace()
                     try {
-                        startIntent(context, PACKAGE_VIVO_MAIN, PACKAGE_VIVO_COMPONENT_FALLBACK_A)
+                        startIntent(context, PACKAGE_VIVO_MAIN, PACKAGE_VIVO_COMPONENT_FALLBACK_A, requestCode)
                     } catch (exx: Exception) {
                         exx.printStackTrace()
                     }
@@ -159,11 +160,11 @@ class AutoStartPermissionHelper private constructor() {
     }
 
     @Throws(Exception::class)
-    private fun startIntent(context: Context, packageName: String, componentName: String) {
+    private fun startIntent(context: Context, packageName: String, componentName: String, requestCode: Int) {
         try {
             val intent = Intent()
             intent.component = ComponentName(packageName, componentName)
-            context.startActivity(intent)
+            (context as Activity).startActivityForResult(intent, requestCode)
         } catch (exception: Exception) {
             exception.printStackTrace()
             throw exception
